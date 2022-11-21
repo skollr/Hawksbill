@@ -1,0 +1,1056 @@
+$color-palette: (
+  "first": #333333,
+  "second": #797979,
+  "third": #C1C1C1,
+  "fourth": #FAFAFA,
+  "fifth": #FFFFFF,
+);
+
+@mixin flex($direction, $wrap, $justify, $align) {
+  display: flex;
+  flex-flow: $direction $wrap;
+  justify-content: $justify;
+  align-items: $align;
+}
+
+@mixin grid($gap, $autoflow, $autorows, $mincolumns, $maxcolumns, $aling, $justify) {
+  display: grid;
+  gap: $gap;
+  grid-auto-flow: $autoflow;
+  grid-auto-rows: $autorows;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, $mincolumns), $maxcolumns));
+  place-items: $aling $justify;
+}
+
+@mixin cursor() {
+  color: map-get($map: $color-palette, $key: second);
+  cursor: pointer;
+}
+
+@mixin cover() {
+  width: 100%;
+  height: 100%;
+}
+
+@mixin fullScreen() {
+  width: 100vw;
+  height: 100vh;
+}
+
+@mixin coverWidth {
+  width: 100%;
+  height: fit-content;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+  list-style: none;
+
+  &::selection {
+    background-color: map-get($map: $color-palette, $key: first);
+    color: map-get($map: $color-palette, $key: fifth);
+    text-shadow: 1px 1px map-get($map: $color-palette, $key: second)
+  }
+
+  &::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 2px map-get($map: $color-palette, $key: first);
+    border-radius: 2px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: map-get($map: $color-palette, $key: first);
+    border-radius: 2px;
+
+    &:hover {
+      background: map-get($map: $color-palette, $key: fourth);
+    }
+  }
+
+}
+
+body,
+.Hawksbill,
+#root {
+  @include fullScreen();
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.container {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  height: 100%;
+  overflow-y: auto;
+
+  &--blocks {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(180px, 50%));
+    row-gap: 40px;
+  }
+
+}
+
+.box-item {
+  border-radius: 32px;
+  background-color: map-get($map: $color-palette, $key: fifth);
+  padding: 52px;
+
+  &--row {
+    grid-column: 1 / 3;
+  }
+
+  &--dashboard-linearbar {
+    padding: 24px 48px,
+  }
+
+  &--dashboard-charts {
+    display: grid;
+    grid-template-columns: 55% 45%;
+    justify-content: space-between;
+  }
+}
+
+.linear {
+  @include flex(column, nowrap, space-around, flex-start);
+  height: 80%;
+  padding-top: 20px;
+
+  &-bar {
+    opacity: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+
+    &__text {
+      font-weight: 700;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      color: map-get($map: $color-palette, $key: second);
+      user-select: none;
+
+      &--percent {
+        width: 100px
+      }
+
+      &--category {
+        width: 25%;
+
+        @media (max-width: 799px) {
+          width: 35%;
+        }
+
+        @media (max-width: 599px) {
+          width: 45%;
+        }
+      }
+    }
+
+    &__container {
+      height: 10px;
+      width: 100%;
+      margin: 0 40px;
+      border-radius: 5px;
+      background-color: map-get($map: $color-palette, $key: third);
+    }
+
+    &__progress {
+      height: 100%;
+      width: 0%;
+      border-radius: 5px;
+      background-color: #004f88;
+      transition: width .5s ease-in-out;
+    }
+  }
+}
+
+.chart {
+
+  &--xy,
+  &--donut {
+    width: 100%;
+    height: 325px;
+  }
+
+  &--xy {
+    grid-column: 1/2;
+
+    @media (max-width: 999px) {
+      grid-column: 1/3;
+    }
+  }
+
+  &--donut {
+    grid-column: 2/3;
+
+    @media (max-width: 999px) {
+      grid-column: 1/3;
+    }
+  }
+}
+
+.reusable {
+  @include coverWidth();
+
+  &__mmiddle {
+    @include flex(row, nowrap, center, flex-start);
+    width: 75%;
+  }
+
+  &--grid {
+    @include grid(40px, row, auto, 200px, 200px, center, center);
+    margin-top: 20px;
+    justify-content: center;
+  }
+
+  &__form {
+    @include coverWidth();
+  }
+
+  &__modal {
+    @include flex(column, nowrap, center, center);
+    @include fullScreen();
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: -10;
+    opacity: 0;
+    padding: 10px;
+    transition: opacity 0.5s;
+
+    &-container {
+      @include cover();
+      position: relative;
+      padding: 20px 40px;
+      min-width: 340px;
+      min-height: 400px;
+      max-width: 600px;
+      max-height: 800px;
+      background: map-get($map: $color-palette, $key: fourth);
+      border: 1px solid #AFAFAF;
+      box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(20px);
+      border-radius: 15px;
+    }
+
+    &-header {
+      @include flex(row, nowrap, space-around, center);
+      @include coverWidth();
+      height: 100px;
+
+      &--title {
+        margin-left: 30px;
+        text-align: center;
+        font-style: normal;
+        font-weight: 700;
+        font-size: 18px;
+        line-height: 22px;
+        color: map-get($map: $color-palette, $key: first);
+        user-select: none;
+        overflow: hidden;
+      }
+    }
+
+    &-body {
+      @include coverWidth();
+      height: calc(100% - 200px);
+      overflow-y: scroll;
+      padding: 10px 0px;
+
+      &--footer {
+        height: calc(100% - 100px);
+      }
+    }
+
+    &-request-info {
+      height: 100%;
+      display: grid;
+      gap: 20px;
+      grid-template-columns: auto;
+      place-items: flex-start center;
+    }
+
+    &-request-detail {
+      @include flex(column, nowrap, center, flex-start);
+      user-select: none;
+    }
+
+    &-footer {
+      @include coverWidth();
+      @include flex(column, nowrap, space-around, center);
+      background: map-get($map: $color-palette, $key: fourth);
+      height: 100px;
+      padding: 0px 10px;
+      position: absolute;
+      bottom: 21px;
+      left: 0px;
+    }
+
+    &--is-open {
+      z-index: 10000;
+      opacity: 1;
+    }
+  }
+
+  &__label {
+    @include flex(column, nowrap, center, flex-start);
+
+    &--center {
+      @include flex(column, nowrap, center, center);
+    }
+
+    &-text {
+      padding-left: 10px;
+      font-style: normal;
+      font-weight: 700;
+      font-size: 12px;
+      line-height: 16px;
+      color: map-get($map: $color-palette, $key: first);
+      user-select: none;
+
+      &--hyperlink {
+        font-size: 13px;
+        line-height: 18px;
+        padding: 0px;
+
+        &:hover,
+        &:active {
+          @include cursor();
+        }
+      }
+    }
+  }
+
+  &__input {
+    @include coverWidth();
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    color: map-get($map: $color-palette, $key: first);
+    border: none;
+    border-bottom: 1px solid map-get($map: $color-palette, $key: second);
+    padding: 10px;
+    margin-bottom: 20px;
+    background: map-get($map: $color-palette, $key: fifth);
+
+    &:focus-visible {
+      outline: none;
+      border-bottom: 2px solid map-get($map: $color-palette, $key: first);
+    }
+
+    &::placeholder {
+      font-style: normal;
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 16px;
+      color: map-get($map: $color-palette, $key: second);
+    }
+
+    & &--shadow {
+      box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    }
+
+    &--padding-icon {
+      padding-left: 36px;
+    }
+
+    &--margin-top {
+      margin-top: 10px;
+    }
+
+    &--top-left-radius {
+      border-top-left-radius: 10px;
+    }
+
+    &--top-right-radius {
+      border-top-right-radius: 10px;
+    }
+
+    &--bottom-right-radius {
+      border-bottom-right-radius: 10px;
+    }
+
+    &--bottom-left-radius {
+      border-bottom-left-radius: 10px;
+    }
+
+    &--icon-container {
+      @include coverWidth();
+    }
+
+    &-icon {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border: none;
+      background: none;
+      left: calc(15% + 10px);
+      top: 50%;
+      transform: translateY(calc(-50% - 10px));
+      color: map-get($map: $color-palette, $key: first);
+      transition: all 0.5s;
+
+      &:hover,
+      &:active {
+        cursor: pointer;
+        color: map-get($map: $color-palette, $key: second);
+      }
+
+      @media (max-width: 599px) {
+        left: 10px;
+      }
+    }
+  }
+
+  &--search-container {
+    @include flex(row, nowrap, center, flex-start);
+    position: relative;
+    padding: 0px 15%;
+    transition: all 0.5s;
+
+    @media (max-width: 599px) {
+      padding: 0px;
+    }
+  }
+
+  &__card {
+    position: relative;
+    width: 200px;
+    height: 250px;
+    background: map-get($map: $color-palette, $key: third);
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 15px;
+    color: map-get($map: $color-palette, $key: first);
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 14px;
+
+    &-image {
+      position: absolute;
+      left: calc(50% - 50px);
+      top: 50px;
+      width: 100px;
+      height: 100px;
+      border: 2px solid map-get($map: $color-palette, $key: fifth);
+      filter: drop-shadow(0px 5px 10px rgba(0, 0, 0, 0.25));
+      border-radius: 15px;
+      z-index: 10;
+
+      &--detail {
+        position: static;
+        width: 200px;
+        height: 200px;
+      }
+    }
+
+    &-detail {
+      @include flex(column, nowrap, center, center);
+      @include coverWidth();
+      position: absolute;
+      bottom: 30px;
+    }
+
+    &-request-info {
+      color: map-get($map: $color-palette, $key: first);
+      padding: 0px 50px;
+      font-style: normal;
+      font-size: 18px;
+      line-height: 30px;
+      text-align: start;
+    }
+
+    &-info {
+      width: 80%;
+      margin: 0px;
+      padding: 0px;
+      text-align: start;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      user-select: none;
+
+      &--center {
+        text-align: center;
+      }
+
+      &--bold {
+        font-weight: 500;
+      }
+
+      &--title {
+        font-style: normal;
+        font-weight: 600;
+        font-size: 14px;
+        line-height: 25px;
+      }
+    }
+
+    &::after {
+      content: "";
+      display: block;
+      position: absolute;
+      top: 0px;
+      width: 200px;
+      height: 100px;
+      background: map-get($map: $color-palette, $key: fourth);
+      border-top-left-radius: 15px;
+      border-top-right-radius: 15px;
+    }
+
+    &:hover,
+    &:active {
+      cursor: pointer;
+      color: map-get($map: $color-palette, $key: fifth);
+      background: map-get($map: $color-palette, $key: first);
+
+      &>.reusable__card-image {
+        border: 2px solid map-get($map: $color-palette, $key: second);
+      }
+
+      &::after {
+        background: map-get($map: $color-palette, $key: third);
+      }
+    }
+  }
+
+  &__button {
+    @include flex(row, nowrap, center, center);
+    @include coverWidth();
+  }
+
+  &__primary-button {
+    width: fit-content;
+    height: 30px;
+    min-width: 150px;
+    border: none;
+    background: map-get($map: $color-palette, $key: first);
+    color: map-get($map: $color-palette, $key: fifth);
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 16px;
+
+    &:hover,
+    &:active {
+      cursor: pointer;
+      color: map-get($map: $color-palette, $key: first);
+      background: map-get($map: $color-palette, $key: second);
+    }
+
+    &:disabled {
+      background: map-get($map: $color-palette, $key: fourth);
+      color: map-get($map: $color-palette, $key: first);
+      border: 1px solid map-get($map: $color-palette, $key: first);
+      cursor: not-allowed;
+    }
+  }
+
+  &__trasparent-button {
+    width: fit-content;
+    height: 30px;
+    min-width: 30px;
+    border: none;
+    background: none;
+    color: map-get($map: $color-palette, $key: first);
+    font-style: normal;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 16px;
+
+    &:hover,
+    &:active {
+      cursor: pointer;
+      color: map-get($map: $color-palette, $key: second);
+    }
+  }
+
+  &__icon {
+    @include cover();
+  }
+}
+
+.login {
+  @include flex(row, nowrap, center, center);
+  @include fullScreen();
+  padding: 10px;
+  overflow: auto;
+  background-color: map-get($map: $color-palette, $key: first);
+  background-image: linear-gradient(315deg, map-get($map: $color-palette, $key: second) 0%, map-get($map: $color-palette, $key: first) 74%);
+
+  &__container {
+    @include flex(column, nowrap, space-between, center);
+    @include cover();
+    min-width: 340px;
+    max-width: 488px;
+    min-height: 580px;
+    max-height: 788px;
+    background: map-get($map: $color-palette, $key: fifth);
+    border: 1px solid map-get($map: $color-palette, $key: fourth);
+    box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(40px);
+    border-radius: 15px;
+    padding: 30px;
+    overflow: hidden;
+
+    @media (max-width: 359px) {
+      width: 340px;
+    }
+
+    @media (max-height: 599px) {
+      height: 580px;
+    }
+  }
+
+  &__logo {
+    width: 29.41%;
+    height: 15.37%;
+    min-width: 100px;
+    max-width: 152px;
+    min-height: 89.1px;
+    max-height: 135.3px;
+
+    @media (max-width: 359px) {
+      width: 100px;
+    }
+
+    @media (max-height: 599px) {
+      height: 89.1px;
+    }
+  }
+
+  &__slide {
+    @include flex(row, nowrap, space-between, center);
+    @include coverWidth();
+    overflow: hidden;
+    transition: transform 0.25s;
+
+    &--displace {
+      transform: translateX(100vw)
+    }
+  }
+
+  &__form-container {
+    @include flex(column, nowrap, space-between, flex-start);
+    @include coverWidth();
+    min-width: 280px;
+    max-width: 428px;
+    min-height: 335px;
+    max-height: 400px;
+  }
+
+  &__options {
+    @include flex(column, nowrap, space-between, flex-start);
+    width: fit-content;
+    height: 46px;
+  }
+
+  &__question {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 18px;
+    color: map-get($map: $color-palette, $key: first);
+    user-select: none;
+  }
+
+  &__social-network {
+    @include flex(row, nowrap, space-between, center);
+    width: 210px;
+    height: 40px;
+    padding: 10px;
+  }
+
+  &__hyperlink {
+    color: map-get($map: $color-palette, $key: first);
+    height: 100%;
+    width: fit-content;
+
+    &:hover,
+    &:active {
+      @include cursor();
+    }
+  }
+
+  @media (max-width: 359px) {
+    width: fit-content;
+  }
+
+  @media (max-height: 599px) {
+    height: fit-content;
+  }
+}
+
+.adminlayout {
+  @include cover();
+  background: map-get($map: $color-palette, $key: fourth)
+}
+
+.header {
+  @include flex(row, nowrap, space-between, center);
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  padding: 14px 24px;
+  width: 100vw;
+  height: 80px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
+  background: map-get($map: $color-palette, $key: fourth);
+  z-index: 1000;
+  transition: height 0.5s;
+
+  &__toggle-button-silhouette {
+    height: 32px;
+    width: 32px;
+    display: none;
+
+    @media (max-width: 799px) {
+      display: block;
+    }
+  }
+
+  &__logo {
+    width: auto;
+    height: 5.33%;
+    min-width: 144.37px;
+    max-width: 234.59px;
+    min-height: 32px;
+    max-height: 52px;
+
+    @media (max-width: 799px) {
+      width: 30.10%;
+    }
+
+    @media (max-width: 359px) {
+      width: 144.37px;
+    }
+
+    @media (max-height: 599px) {
+      height: 32px;
+    }
+  }
+
+  &__right-side {
+    @include flex(row, nowrap, center, center);
+  }
+
+  &__chat-icon {
+    width: 18px;
+    height: 18px;
+    color: map-get($map: $color-palette, $key: first);
+
+    &:hover,
+    &:active {
+      @include cursor();
+    }
+  }
+
+  &__profile {
+    @include flex(row, nowrap, space-between, center);
+    user-select: none;
+    color: map-get($map: $color-palette, $key: first);
+
+    &-detail {
+      @include flex(column, nowrap, space-between, flex-end);
+      margin-left: 45px;
+    }
+
+    &-username {
+      font-style: normal;
+      font-weight: 600;
+      font-size: 15px;
+      line-height: 18px;
+    }
+
+    &-position {
+      font-style: normal;
+      font-weight: 500;
+      font-size: 12px;
+      line-height: 14px;
+    }
+
+    &-image {
+      width: 52px;
+      height: 52px;
+      box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.25);
+      border-radius: 6px;
+      background-size: cover;
+      margin-left: 32px;
+
+      &:hover,
+      &:active {
+        box-shadow: unset;
+        cursor: pointer;
+      }
+    }
+
+    @media (max-width: 799px) {
+      display: none;
+    }
+  }
+
+  @media (max-width: 799px) {
+    padding: 34px 40px;
+    height: 100px;
+    box-shadow: unset;
+    z-index: 0;
+  }
+}
+
+.side-menu {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  padding-top: 172px;
+  width: 80px;
+  overflow: hidden;
+  transition: width 0.5s;
+  background: map-get($map: $color-palette, $key: fourth);
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.25);
+  z-index: 0;
+
+  @media (max-width: 799px) {
+    padding-top: 100px;
+    width: 0px;
+  }
+
+  &__toggle-button {
+    width: 32px;
+    height: 32px;
+    padding: 8px;
+    border: 1px solid map-get($map: $color-palette, $key: second);
+    background: map-get($map: $color-palette, $key: fourth);
+    border-radius: 10px;
+    color: map-get($map: $color-palette, $key: first);
+    position: fixed;
+    top: 120px;
+    left: 64px;
+    transition: all 0.5s;
+
+    &--open-menu {
+      transform: translateX(240px);
+
+      @media (max-width: 799px) {
+        transform: translateX(calc(100vw - 112px));
+      }
+    }
+
+    &:hover,
+    &:active {
+      @include cursor();
+    }
+
+    @media (max-width: 799px) {
+      width: 32px;
+      height: 32px;
+      padding: 0px;
+      top: 34px;
+      left: 40px;
+      border: unset;
+      background: unset;
+      border-radius: unset;
+    }
+  }
+
+  &__navbar {
+    @include flex(column, nowrap, space-between, flex-start);
+    width: 100%;
+    height: calc(100vh - 172px);
+    padding: 0px 14px 14px 14px;
+    overflow: hidden;
+    overflow-y: scroll;
+
+    &-list {
+      @include coverWidth();
+    }
+
+    @media (max-width: 799px) {
+      height: calc(100vh - 100px);
+    }
+  }
+
+  &__item {
+    width: 100%;
+    height: 52px;
+    min-width: 52px;
+    border-radius: 10px;
+    overflow: hidden;
+    color: map-get($map: $color-palette, $key: first);
+
+    &-destination {
+      @include cover();
+      max-height: 52px;
+      display: block;
+      padding: 15px;
+      color: map-get($map: $color-palette, $key: first);
+
+      &:hover,
+      &:active {
+        background: map-get($map: $color-palette, $key: third);
+        cursor: pointer;
+      }
+    }
+
+    &-container {
+      display: grid;
+      grid-template-columns: 22px auto;
+      gap: 12px;
+      overflow: hidden;
+    }
+
+    &-detail {
+      font-style: normal;
+      font-weight: 400;
+      font-size: 15px;
+      line-height: 18px;
+      user-select: none;
+      text-overflow: clip;
+      overflow: hidden;
+      white-space: pre;
+    }
+
+    &-icon {
+      width: 22px;
+      height: 22px;
+    }
+
+    &-sublist {
+      height: 0px;
+      margin-left: 26px;
+      padding-left: 26px;
+      border-left: solid 1px map-get($map: $color-palette, $key: third);
+      overflow: hidden;
+      transition: height 0.5s;
+    }
+  }
+
+  &--open-menu {
+    width: 320px;
+
+    &~.main {
+      padding: 100px 20px 20px 340px;
+    }
+
+    @media (max-width: 799px) {
+      &~.main {
+        padding: 120px 20px 20px 20px;
+      }
+
+      width: 100%;
+      z-index: 1000;
+    }
+  }
+}
+
+.main {
+  @include fullScreen();
+  padding: 100px 20px 20px 100px;
+  transition: padding 0.5s;
+
+  &__content {
+    overflow: hidden;
+    overflow-y: scroll;
+    @include cover();
+    padding: 20px;
+
+    &--center {
+      @include flex(row, nowrap, center, flex-start);
+    }
+
+    @media (max-width: 799px) {
+      padding: 0px 20px 20px 20px;
+    }
+  }
+
+
+  @media (max-width: 799px) {
+    padding: 120px 20px 20px 20px;
+  }
+}
+
+.paginator {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &__box {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 50px;
+    padding: 10px 30px;
+    width: 320px;
+    height: 60px;
+    background: map-get($map: $color-palette, $key: sixth);
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+  }
+
+  &__button {
+    width: 40px;
+    height: 40px;
+    border: none;
+    color: map-get($map: $color-palette, $key: first);
+    background: none;
+
+    &:hover,
+    &:focus,
+    &:active {
+      color: map-get($map: $color-palette, $key: second);
+      @include cursor();
+    }
+  }
+
+  &__page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-style: normal;
+    font-weight: 900;
+    font-size: 20px;
+    line-height: 23px;
+    user-select: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: map-get($map: $color-palette, $key: first);
+    color: map-get($map: $color-palette, $key: fifth);
+  }
+
+  &__info {
+    padding-top: 20px;
+    user-select: none;
+    color: map-get($map: $color-palette, $key: first);
+
+    &--bold {
+      font-weight: 700;
+    }
+  }
+}
